@@ -162,7 +162,7 @@ formulario.addEventListener("submit", async (evento) => {
 
   const datos = new FormData(formulario);
   const servicioElegido = servicios[datos.get("servicio")];
-  estadoReserva.textContent = "Guardando tu solicitud...";
+  estadoReserva.textContent = "Guardando tu cita...";
   const { error } = await supabase.rpc("create_appointment", {
     p_service_id: datos.get("servicio"),
     p_client_name: datos.get("nombre"),
@@ -197,7 +197,7 @@ formulario.addEventListener("submit", async (evento) => {
   horarioSeleccionado = "";
   selectorHorarios.hidden = true;
   estadoReserva.textContent =
-    "Solicitud registrada. Abrimos WhatsApp para avisar a Collins.";
+    "¡Tu cita quedó confirmada! Abrimos WhatsApp para avisarle a Collins.";
 });
 
 const mensajeDomicilio =
