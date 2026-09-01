@@ -111,7 +111,12 @@ h2::after {
   background-position: center;
   filter: blur(6px);
   transform: scale(1.1);
-  z-index: -1;
+  z-index: 0;
+}
+
+#inicio > * {
+  position: relative;
+  z-index: 1;
 }
 
 .boton-principal {
