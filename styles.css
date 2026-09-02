@@ -534,3 +534,49 @@ figcaption {
   border-radius: 8px;
   padding: 1rem;
 }
+
+.panel {
+  max-width: 420px;
+  margin: 6rem auto;
+  padding: 3rem 2rem;
+  background-color: var(--color-bg-panel);
+  border-radius: 16px;
+  text-align: center;
+}
+
+.panel h1 {
+  margin-bottom: 2rem;
+}
+
+.formulario-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  text-align: left;
+}
+
+.formulario-panel label {
+  font-size: 0.8rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #c9c6bd;
+}
+
+.formulario-panel input {
+  width: 100%;
+  border: 1px solid #3b3b3b;
+  border-radius: 8px;
+  padding: 0.9rem 1rem;
+  background-color: var(--color-bg);
+  color: var(--color-cream);
+  font: inherit;
+  letter-spacing: 3px;
+}
+
+.formulario-panel input:focus-visible {
+  border-color: var(--color-gold);
+}
+
+.formulario-panel button {
+  margin-top: 0.5rem;
+}
