@@ -557,6 +557,7 @@ figcaption {
 
 .formulario-panel label {
   font-size: 0.8rem;
+  text-align: center;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: #c9c6bd;
