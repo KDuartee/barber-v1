@@ -4,16 +4,40 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Panel de Administración</title>
+    <meta name="robots" content="noindex, nofollow" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <form id="formulario-panel">
-      <label for="clave">Contraseña:</label>
-      <input type="password" id="clave" name="password" />
-      <button type="submit">Ingresar</button>
-    </form>
-    <p id="estado-panel"></p>
-    <div id="tabla-citas" hidden></div>
+    <main class="panel">
+      <h1>Panel de citas</h1>
+      <form id="formulario-panel" class="formulario-panel">
+        <label for="clave">Contraseña:</label>
+        <input type="password" id="clave" name="password" placeholder="Contraseña" required autocomplete="off" />
+        <button type="submit" class="boton-principal">Ingresar</button>
+      </form>
+      <p id="estado-panel" class="estado-reserva" aria-live="polite"></p>
+
+      <section id="estadisticas" class="estadisticas" hidden>
+        <h2>Este mes</h2>
+        <div class="tarjetas-stats">
+          <div class="stat-card">
+            <span class="stat-valor" id="stat-ingresos">$0</span>
+            <span class="stat-label">Ingresos</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-valor" id="stat-citas">0</span>
+            <span class="stat-label">Citas realizadas</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-valor" id="stat-cliente">—</span>
+            <span class="stat-label">Cliente más frecuente</span>
+          </div>
+        </div>
+        <div id="stat-servicios" class="stat-servicios"></div>
+      </section>
+
+      <div id="tabla-citas" class="tabla-citas" hidden></div>
+    </main>
     <script src="panel.js" type="module"></script>
   </body>
 </html>
