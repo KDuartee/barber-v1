@@ -472,3 +472,65 @@ figcaption {
   border-radius: 6px;
   padding: 0.6rem 1rem;
 }
+
+.estadisticas {
+  margin-top: 2rem;
+  text-align: left;
+}
+
+.tarjetas-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  background-color: var(--color-bg-panel);
+  border-radius: 8px;
+  padding: 1.25rem;
+  text-align: center;
+}
+
+.stat-valor {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  color: var(--color-gold);
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: #c9c6bd;
+}
+
+.stat-servicios {
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.fila-servicio {
+  display: flex;
+  justify-content: space-between;
+  background-color: var(--color-bg-panel);
+  border-radius: 6px;
+  padding: 0.6rem 1rem;
+}
+
+.tabla-citas {
+  display: grid;
+  gap: 0.75rem;
+  text-align: left;
+  margin-top: 1.5rem;
+}
+
+.fila-cita {
+  display: grid;
+  gap: 0.3rem;
+  background-color: var(--color-bg-panel);
+  border-radius: 8px;
+  padding: 1rem;
+}
