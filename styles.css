@@ -548,6 +548,11 @@ figcaption {
   margin-bottom: 2rem;
 }
 
+.panel h2 {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
 .formulario-panel {
   display: flex;
   flex-direction: column;
