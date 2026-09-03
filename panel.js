@@ -11,9 +11,13 @@ const statIngresos = document.querySelector("#stat-ingresos");
 const statCitas = document.querySelector("#stat-citas");
 const statCliente = document.querySelector("#stat-cliente");
 const statServicios = document.querySelector("#stat-servicios");
+const cerrarSesion = document.querySelector("#cerrar-sesion");
 
 function formatoMoneda(numero) {
-  return new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN" }).format(numero);
+  return new Intl.NumberFormat("es-MX", {
+    style: "currency",
+    currency: "MXN",
+  }).format(numero);
 }
 
 function mostrarEstadisticas(stats) {
@@ -42,16 +46,24 @@ formulario.addEventListener("submit", async (event) => {
   tablaCitas.hidden = true;
   estadisticas.hidden = true;
 
-  const { data, error } = await supabase.rpc("get_upcoming_appointments", { p_password: clave.value });
+  const { data, error } = await supabase.rpc("get_upcoming_appointments", {
+    p_password: clave.value,
+  });
 
   if (error) {
     estadoPanel.textContent = "Contraseña incorrecta";
     return;
   }
 
-  const { data: stats, error: statsError } = await supabase.rpc("get_monthly_stats", {
-    p_password: clave.value,
-  });
+  formulario.hidden = true;
+  cerrarSesion.hidden = false;
+
+  const { data: stats, error: statsError } = await supabase.rpc(
+    "get_monthly_stats",
+    {
+      p_password: clave.value,
+    },
+  );
 
   if (!statsError) {
     mostrarEstadisticas(stats);
@@ -77,3 +89,5 @@ formulario.addEventListener("submit", async (event) => {
     .join("");
   tablaCitas.hidden = false;
 });
+
+cerrarSesion.addEventListener("click", () => location.reload());
