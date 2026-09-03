@@ -613,3 +613,9 @@ figcaption {
   color: var(--color-gold-light);
   background-color: rgba(201, 163, 78, 0.12);
 }
+
+.formulario-panel[hidden],
+.tabla-citas[hidden],
+.cerrar-sesion[hidden] {
+  display: none;
+}
