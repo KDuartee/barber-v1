@@ -13,6 +13,8 @@ const statCliente = document.querySelector("#stat-cliente");
 const statServicios = document.querySelector("#stat-servicios");
 const cerrarSesion = document.querySelector("#cerrar-sesion");
 
+let contraseñaActual = "";
+
 function formatoMoneda(numero) {
   return new Intl.NumberFormat("es-MX", {
     style: "currency",
@@ -40,14 +42,13 @@ function mostrarEstadisticas(stats) {
   estadisticas.hidden = false;
 }
 
-formulario.addEventListener("submit", async (event) => {
-  event.preventDefault();
+async function cargarPanel() {
   estadoPanel.textContent = "Buscando citas...";
   tablaCitas.hidden = true;
   estadisticas.hidden = true;
 
   const { data, error } = await supabase.rpc("get_upcoming_appointments", {
-    p_password: clave.value,
+    p_password: contraseñaActual,
   });
 
   if (error) {
@@ -61,7 +62,7 @@ formulario.addEventListener("submit", async (event) => {
   const { data: stats, error: statsError } = await supabase.rpc(
     "get_monthly_stats",
     {
-      p_password: clave.value,
+      p_password: contraseñaActual,
     },
   );
 
@@ -83,11 +84,38 @@ formulario.addEventListener("submit", async (event) => {
       <strong>${cita.appointment_date} · ${cita.start_time.slice(0, 5)}</strong>
       <p>${cita.service_name}</p>
       <p>${cita.client_name} — ${cita.client_phone}</p>
+      <button type="button" class="cancelar-cita" data-id="${cita.id}">Cancelar</button>
     </div>
   `,
     )
     .join("");
   tablaCitas.hidden = false;
+}
+
+formulario.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  contraseñaActual = clave.value;
+  await cargarPanel();
 });
 
 cerrarSesion.addEventListener("click", () => location.reload());
+
+tablaCitas.addEventListener("click", async (event) => {
+  const boton = event.target.closest(".cancelar-cita");
+  if (!boton) return;
+
+  const confirmar = confirm("¿Seguro que quieres cancelar esta cita?");
+  if (!confirmar) return;
+
+  const { error } = await supabase.rpc("cancel_appointment", {
+    p_password: contraseñaActual,
+    p_appointment_id: Number(boton.dataset.id),
+  });
+
+  if (error) {
+    alert("No se pudo cancelar la cita.");
+    return;
+  }
+
+  await cargarPanel();
+});

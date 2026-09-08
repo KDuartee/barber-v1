@@ -624,3 +624,20 @@ figcaption {
 .cerrar-sesion[hidden] {
   display: none;
 }
+
+.cancelar-cita {
+  margin-top: 0.6rem;
+  border: 1px solid #7a2f2f;
+  border-radius: 6px;
+  padding: 0.4rem 0.8rem;
+  background: transparent;
+  color: #e08585;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.cancelar-cita:hover,
+.cancelar-cita:focus-visible {
+  background-color: #7a2f2f;
+  color: var(--color-cream);
+}
