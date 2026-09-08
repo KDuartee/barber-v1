@@ -12,6 +12,7 @@ const statCitas = document.querySelector("#stat-citas");
 const statCliente = document.querySelector("#stat-cliente");
 const statServicios = document.querySelector("#stat-servicios");
 const cerrarSesion = document.querySelector("#cerrar-sesion");
+const refrescar = document.querySelector("#refrescar");
 
 let contraseñaActual = "";
 
@@ -20,6 +21,17 @@ function formatoMoneda(numero) {
     style: "currency",
     currency: "MXN",
   }).format(numero);
+}
+
+function formatoHora12(horaTexto) {
+  const [horas, minutos] = horaTexto.split(":").map(Number);
+  const fecha = new Date();
+  fecha.setHours(horas, minutos, 0, 0);
+  return fecha.toLocaleTimeString("es-MX", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
 }
 
 function mostrarEstadisticas(stats) {
@@ -58,6 +70,7 @@ async function cargarPanel() {
 
   formulario.hidden = true;
   cerrarSesion.hidden = false;
+  refrescar.hidden = false;
 
   const { data: stats, error: statsError } = await supabase.rpc(
     "get_monthly_stats",
@@ -81,7 +94,7 @@ async function cargarPanel() {
     .map(
       (cita) => `
     <div class="fila-cita">
-      <strong>${cita.appointment_date} · ${cita.start_time.slice(0, 5)}</strong>
+      <strong>${cita.appointment_date} · ${formatoHora12(cita.start_time)}</strong>
       <p>${cita.service_name}</p>
       <p>${cita.client_name} — ${cita.client_phone}</p>
       <button type="button" class="cancelar-cita" data-id="${cita.id}">Cancelar</button>
@@ -100,6 +113,8 @@ formulario.addEventListener("submit", async (event) => {
 
 cerrarSesion.addEventListener("click", () => location.reload());
 
+refrescar.addEventListener("click", () => cargarPanel());
+
 tablaCitas.addEventListener("click", async (event) => {
   const boton = event.target.closest(".cancelar-cita");
   if (!boton) return;
@@ -117,5 +132,6 @@ tablaCitas.addEventListener("click", async (event) => {
     return;
   }
 
+  alert("Cita cancelada.");
   await cargarPanel();
 });
