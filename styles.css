@@ -641,3 +641,6 @@ figcaption {
   background-color: #7a2f2f;
   color: var(--color-cream);
 }
+.boton-refrescar {
+  right: 4.5rem;
+}
