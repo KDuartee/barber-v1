@@ -13,6 +13,11 @@ const statCliente = document.querySelector("#stat-cliente");
 const statServicios = document.querySelector("#stat-servicios");
 const cerrarSesion = document.querySelector("#cerrar-sesion");
 const refrescar = document.querySelector("#refrescar");
+const diasBloqueadosSection = document.querySelector("#dias-bloqueados");
+const formularioBloqueo = document.querySelector("#formulario-bloqueo");
+const fechaBloqueo = document.querySelector("#fecha-bloqueo");
+const motivoBloqueo = document.querySelector("#motivo-bloqueo");
+const listaBloqueados = document.querySelector("#lista-bloqueados");
 
 let contraseñaActual = "";
 
@@ -54,10 +59,24 @@ function mostrarEstadisticas(stats) {
   estadisticas.hidden = false;
 }
 
+function renderDiasBloqueados(dias) {
+  listaBloqueados.innerHTML = (dias || [])
+    .map(
+      (dia) => `
+        <div class="fila-bloqueo">
+          <span>${dia.blocked_date}${dia.reason ? " — " + dia.reason : ""}</span>
+          <button type="button" class="desbloquear-dia" data-fecha="${dia.blocked_date}">Desbloquear</button>
+        </div>`,
+    )
+    .join("");
+  diasBloqueadosSection.hidden = false;
+}
+
 async function cargarPanel() {
   estadoPanel.textContent = "Buscando citas...";
   tablaCitas.hidden = true;
   estadisticas.hidden = true;
+  diasBloqueadosSection.hidden = true;
 
   const { data, error } = await supabase.rpc("get_upcoming_appointments", {
     p_password: contraseñaActual,
@@ -81,6 +100,17 @@ async function cargarPanel() {
 
   if (!statsError) {
     mostrarEstadisticas(stats);
+  }
+
+  const { data: bloqueados, error: bloqueadosError } = await supabase.rpc(
+    "get_blocked_dates",
+    {
+      p_password: contraseñaActual,
+    },
+  );
+
+  if (!bloqueadosError) {
+    renderDiasBloqueados(bloqueados);
   }
 
   if (data.length === 0) {
@@ -134,5 +164,40 @@ tablaCitas.addEventListener("click", async (event) => {
   }
 
   alert("Cita cancelada.");
+  await cargarPanel();
+});
+
+formularioBloqueo.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const { error } = await supabase.rpc("block_date", {
+    p_password: contraseñaActual,
+    p_date: fechaBloqueo.value,
+    p_reason: motivoBloqueo.value || null,
+  });
+
+  if (error) {
+    alert("No se pudo bloquear el día.");
+    return;
+  }
+
+  formularioBloqueo.reset();
+  await cargarPanel();
+});
+
+listaBloqueados.addEventListener("click", async (event) => {
+  const boton = event.target.closest(".desbloquear-dia");
+  if (!boton) return;
+
+  const { error } = await supabase.rpc("unblock_date", {
+    p_password: contraseñaActual,
+    p_date: boton.dataset.fecha,
+  });
+
+  if (error) {
+    alert("No se pudo desbloquear el día.");
+    return;
+  }
+
   await cargarPanel();
 });

@@ -71,6 +71,19 @@
       </section>
 
       <div id="tabla-citas" class="tabla-citas" hidden></div>
+      <section id="dias-bloqueados" class="dias-bloqueados" hidden>
+        <h2>Días bloqueados</h2>
+        <form id="formulario-bloqueo" class="formulario-bloqueo">
+          <input type="date" id="fecha-bloqueo" required />
+          <input
+            type="text"
+            id="motivo-bloqueo"
+            placeholder="Motivo (opcional)"
+          />
+          <button type="submit" class="boton-principal">Bloquear día</button>
+        </form>
+        <div id="lista-bloqueados" class="lista-bloqueados"></div>
+      </section>
     </main>
     <script src="panel.js" type="module"></script>
   </body>

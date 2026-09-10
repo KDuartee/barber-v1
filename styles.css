@@ -644,3 +644,55 @@ figcaption {
 .boton-refrescar {
   right: 4.5rem;
 }
+
+.dias-bloqueados {
+  margin-top: 2rem;
+  text-align: left;
+}
+
+.formulario-bloqueo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 1rem 0 1.5rem;
+}
+
+.formulario-bloqueo input {
+  flex: 1;
+  min-width: 140px;
+  border: 1px solid #3b3b3b;
+  border-radius: 6px;
+  padding: 0.7rem;
+  background-color: var(--color-bg);
+  color: var(--color-cream);
+  font: inherit;
+}
+
+.lista-bloqueados {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.fila-bloqueo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--color-bg-panel);
+  border-radius: 6px;
+  padding: 0.6rem 1rem;
+}
+
+.desbloquear-dia {
+  border: 1px solid #3b3b3b;
+  border-radius: 6px;
+  padding: 0.3rem 0.7rem;
+  background: transparent;
+  color: var(--color-gold-light);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.desbloquear-dia:hover,
+.desbloquear-dia:focus-visible {
+  background-color: var(--color-bg);
+}
