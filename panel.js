@@ -85,6 +85,7 @@ async function cargarPanel() {
 
   if (data.length === 0) {
     estadoPanel.textContent = "No hay citas próximas";
+    tablaCitas.innerHTML = "";
     tablaCitas.hidden = false;
     return;
   }
