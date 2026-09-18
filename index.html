@@ -20,7 +20,7 @@
     <meta property="og:site_name" content="Collins Barber Shop" />
     <meta
       property="og:image"
-      content="https://kduartee.github.io/barber-v1/images/collinsLogo.jpg"
+      content="https://kduartee.github.io/barber-v1/images/collins.jpeg"
     />
     <meta property="og:image:alt" content="Logo de Collins Barber Shop" />
     <meta name="twitter:card" content="summary_large_image" />
@@ -31,7 +31,7 @@
     />
     <meta
       name="twitter:image"
-      content="https://kduartee.github.io/barber-v1/images/collinsLogo.jpg"
+      content="https://kduartee.github.io/barber-v1/images/collins.jpeg"
     />
     <script type="application/ld+json">
       {
@@ -41,8 +41,8 @@
         "name": "Collins Barber Shop",
         "description": "Barbería en Guaymas, Sonora, especializada en cortes de cabello, barba y cuidado personal para hombres.",
         "url": "https://kduartee.github.io/barber-v1/",
-        "image": "https://kduartee.github.io/barber-v1/images/collinsLogo.jpg",
-        "logo": "https://kduartee.github.io/barber-v1/images/collinsLogo.jpg",
+        "image": "https://kduartee.github.io/barber-v1/images/collins.jpeg",
+        "logo": "https://kduartee.github.io/barber-v1/images/collins-logo.png",
         "telephone": "+52 662 297 8045",
         "priceRange": "$$",
         "address": {
@@ -83,7 +83,10 @@
         ]
       }
     </script>
+    <link rel="icon" type="image/png" href="./images/collins-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Jost:wght@400;500&display=swap"
       rel="stylesheet"
@@ -94,12 +97,14 @@
     <header>
       <a href="#inicio">
         <img
-          src="./images/collinsLogo.jpg"
+          src="./images/collins-logo.png"
           alt="Logo de Collins Barber Shop"
           class="logo"
+          width="512"
+          height="512"
         />
       </a>
-      <nav>
+      <nav aria-label="Navegación principal">
         <ul>
           <li><a href="#inicio">Inicio</a></li>
           <li><a href="#reservar">Agendar Cita</a></li>
@@ -136,12 +141,24 @@
             <option value="diseno-cejas">Diseño de cejas — $50</option>
           </select>
 
-          <p>2. Elige un día</p>
-          <div id="dias" class="dias" aria-live="polite"></div>
+          <p id="etiqueta-dias">2. Elige un día</p>
+          <div
+            id="dias"
+            class="dias"
+            role="group"
+            aria-labelledby="etiqueta-dias"
+            aria-live="polite"
+          ></div>
 
           <div id="selector-horarios" class="selector-horarios" hidden>
-            <p>3. Elige un horario</p>
-            <div id="horarios" class="horarios" aria-live="polite"></div>
+            <p id="etiqueta-horarios">3. Elige un horario</p>
+            <div
+              id="horarios"
+              class="horarios"
+              role="group"
+              aria-labelledby="etiqueta-horarios"
+              aria-live="polite"
+            ></div>
           </div>
 
           <label for="nombre">4. Tu nombre</label>
@@ -296,19 +313,47 @@
       <section id="galeria">
         <h2>Galería</h2>
         <figure>
-          <img src="https://placehold.co/400x400" alt="Corte" />
+          <img
+            src="https://placehold.co/400x400"
+            alt="Ejemplo de corte personalizado de Collins Barber Shop"
+            width="400"
+            height="400"
+            loading="lazy"
+            decoding="async"
+          />
           <figcaption>Corte personalizado</figcaption>
         </figure>
         <figure>
-          <img src="https://placehold.co/400x400" alt="Corte de cabello fade" />
+          <img
+            src="https://placehold.co/400x400"
+            alt="Ejemplo de corte de cabello estilo fade"
+            width="400"
+            height="400"
+            loading="lazy"
+            decoding="async"
+          />
           <figcaption>Corte de cabello fade</figcaption>
         </figure>
         <figure>
-          <img src="https://placehold.co/400x400" alt="Afeitado" />
+          <img
+            src="https://placehold.co/400x400"
+            alt="Ejemplo de afeitado profesional en barbería"
+            width="400"
+            height="400"
+            loading="lazy"
+            decoding="async"
+          />
           <figcaption>Afeitado profesional</figcaption>
         </figure>
         <figure>
-          <img src="https://placehold.co/400x400" alt="corte de cabello" />
+          <img
+            src="https://placehold.co/400x400"
+            alt="Ejemplo de corte de cabello terminado"
+            width="400"
+            height="400"
+            loading="lazy"
+            decoding="async"
+          />
           <figcaption>Corte de cabello</figcaption>
         </figure>
       </section>

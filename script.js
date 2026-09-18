@@ -85,6 +85,7 @@ async function crearHorarios() {
     boton.type = "button";
     boton.className = "horario";
     boton.textContent = formatoHora12(textoHorario);
+    boton.setAttribute("aria-pressed", "false");
     boton.addEventListener("click", () =>
       seleccionarHorario(boton, textoHorario),
     );
@@ -95,8 +96,10 @@ async function crearHorarios() {
 function seleccionarHorario(boton, textoHorario) {
   document.querySelectorAll(".horario").forEach((horario) => {
     horario.classList.remove("seleccionado");
+    horario.setAttribute("aria-pressed", "false");
   });
   boton.classList.add("seleccionado");
+  boton.setAttribute("aria-pressed", "true");
   horarioSeleccionado = textoHorario;
 }
 
@@ -111,10 +114,20 @@ function generarDias() {
     const boton = document.createElement("button");
     boton.type = "button";
     boton.className = "dia";
+    boton.setAttribute("aria-pressed", "false");
     const nombreDia = fechaDelBoton.toLocaleDateString("es-MX", {
       weekday: "short",
     });
     boton.innerHTML = `<span>${nombreDia}</span><strong>${fechaDelBoton.getDate()}</strong>`;
+    boton.setAttribute(
+      "aria-label",
+      fechaDelBoton.toLocaleDateString("es-MX", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      }),
+    );
 
     if (fechaDelBoton.getDay() === 0) {
       boton.disabled = true;
@@ -132,8 +145,12 @@ function generarDias() {
 function seleccionarDia(boton, fechaDelBoton) {
   document
     .querySelectorAll(".dia")
-    .forEach((d) => d.classList.remove("seleccionado"));
+    .forEach((d) => {
+      d.classList.remove("seleccionado");
+      d.setAttribute("aria-pressed", "false");
+    });
   boton.classList.add("seleccionado");
+  boton.setAttribute("aria-pressed", "true");
   fechaSeleccionada = fechaDelBoton;
   crearHorarios();
 }

@@ -11,14 +11,14 @@
     <main class="panel">
       <h1>Panel de citas</h1>
       <form id="formulario-panel" class="formulario-panel">
-        <label for="clave">Ingresa tu conraseña</label>
+        <label for="clave">Ingresa tu contraseña</label>
         <input
           type="password"
           id="clave"
           name="password"
           placeholder="Contraseña"
           required
-          autocomplete="off"
+          autocomplete="current-password"
         />
         <button type="submit" class="boton-principal">Ingresar</button>
       </form>
@@ -74,7 +74,9 @@
       <section id="dias-bloqueados" class="dias-bloqueados" hidden>
         <h2>Días bloqueados</h2>
         <form id="formulario-bloqueo" class="formulario-bloqueo">
+          <label for="fecha-bloqueo">Fecha que deseas bloquear</label>
           <input type="date" id="fecha-bloqueo" required />
+          <label for="motivo-bloqueo">Motivo del bloqueo (opcional)</label>
           <input
             type="text"
             id="motivo-bloqueo"

@@ -47,6 +47,9 @@ header nav ul {
 }
 
 header nav ul a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   text-decoration: none;
   color: var(--color-cream);
   font-size: 0.9rem;
@@ -61,9 +64,12 @@ header nav ul a:focus-visible {
 }
 
 .logo {
-  height: 60px;
-  width: auto;
-  mix-blend-mode: multiply;
+  display: block;
+  width: 76px;
+  height: 76px;
+  object-fit: contain;
+  filter: invert(76%) sepia(46%) saturate(596%) hue-rotate(3deg)
+    brightness(88%) contrast(87%);
 }
 
 h1,
@@ -208,6 +214,7 @@ h2::after {
   cursor: pointer;
   font: inherit;
   text-transform: capitalize;
+  min-height: 52px;
 }
 
 .dia span {
@@ -248,6 +255,7 @@ h2::after {
   color: var(--color-cream);
   cursor: pointer;
   font: inherit;
+  min-height: 44px;
 }
 
 .horario:hover,
@@ -319,6 +327,7 @@ h2::after {
   cursor: pointer;
   font: inherit;
   text-decoration: none;
+  min-height: 44px;
 }
 
 .boton-servicio:hover,
@@ -463,6 +472,19 @@ figcaption {
     gap: 0.75rem 1rem;
   }
 
+  header {
+    padding: 0.75rem 1rem;
+  }
+
+  #servicios,
+  #reservar,
+  #testimonios,
+  #galeria,
+  #acerca,
+  #contacto {
+    padding: 3rem 1.25rem;
+  }
+
   h1 {
     font-size: 2rem;
   }
@@ -584,6 +606,7 @@ figcaption {
 }
 
 .panel {
+  position: relative;
   max-width: 420px;
   margin: 6rem auto;
   padding: 3rem 2rem;
@@ -642,8 +665,8 @@ figcaption {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 2.75rem;
+  height: 2.75rem;
   border: none;
   border-radius: 6px;
   background: none;
@@ -682,6 +705,7 @@ figcaption {
   color: #e08585;
   font-size: 0.8rem;
   cursor: pointer;
+  min-height: 44px;
 }
 
 .cancelar-cita:hover,
@@ -703,6 +727,12 @@ figcaption {
   flex-wrap: wrap;
   gap: 0.6rem;
   margin: 1rem 0 1.5rem;
+}
+
+.formulario-bloqueo label {
+  flex-basis: 100%;
+  color: #c9c6bd;
+  font-size: 0.85rem;
 }
 
 .formulario-bloqueo input {
@@ -738,6 +768,7 @@ figcaption {
   color: var(--color-gold-light);
   font-size: 0.8rem;
   cursor: pointer;
+  min-height: 44px;
 }
 
 .desbloquear-dia:hover,
