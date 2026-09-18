@@ -144,6 +144,7 @@ h2::after {
 
 #servicios,
 #reservar,
+#testimonios,
 #galeria,
 #acerca,
 #contacto {
@@ -326,6 +327,47 @@ h2::after {
   color: var(--color-bg);
 }
 
+#testimonios {
+  text-align: center;
+}
+
+.lista-testimonios {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+  margin-top: 2rem;
+}
+
+.tarjeta-testimonio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  min-height: 100%;
+  border: 1px solid #3b3b3b;
+  border-radius: 8px;
+  padding: 1.5rem;
+  background-color: var(--color-bg-panel);
+}
+
+.estrellas {
+  color: var(--color-gold);
+  letter-spacing: 0.15rem;
+  font-size: 1.1rem;
+}
+
+.tarjeta-testimonio blockquote {
+  flex: 1;
+  color: var(--color-cream);
+  line-height: 1.6;
+}
+
+.tarjeta-testimonio cite {
+  color: #c9c6bd;
+  font-size: 0.9rem;
+  font-style: normal;
+}
+
 #galeria {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -423,6 +465,12 @@ figcaption {
 
   h1 {
     font-size: 2rem;
+  }
+}
+
+@media (min-width: 701px) {
+  .lista-testimonios {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
