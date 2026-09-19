@@ -22,6 +22,8 @@ const avisoNuevas = document.querySelector("#aviso-nuevas");
 const claveVistas = "collins-citas-vistas-v1";
 
 let contraseñaActual = "";
+let cargaEnCurso = false;
+let actualizacionAutomatica = null;
 
 function escaparHtml(valor) {
   return String(valor ?? "").replace(/[&<>"']/g, (caracter) => ({
@@ -96,20 +98,25 @@ function renderDiasBloqueados(dias) {
   diasBloqueadosSection.hidden = false;
 }
 
-async function cargarPanel() {
-  estadoPanel.textContent = "Buscando citas...";
-  avisoNuevas.hidden = true;
-  tablaCitas.hidden = true;
-  estadisticas.hidden = true;
-  diasBloqueadosSection.hidden = true;
+async function cargarPanel({ silencioso = false } = {}) {
+  if (cargaEnCurso) return false;
+  cargaEnCurso = true;
+  try {
+    if (!silencioso) {
+      estadoPanel.textContent = "Buscando citas...";
+      avisoNuevas.hidden = true;
+      tablaCitas.hidden = true;
+      estadisticas.hidden = true;
+      diasBloqueadosSection.hidden = true;
+    }
 
   const { data, error } = await supabase.rpc("get_upcoming_appointments", {
     p_password: contraseñaActual,
   });
 
   if (error) {
-    estadoPanel.textContent = "Contraseña incorrecta";
-    return;
+    if (!silencioso) estadoPanel.textContent = "No se pudo cargar el panel. Revisa tu contraseña o conexión.";
+    return false;
   }
 
   formulario.hidden = true;
@@ -142,7 +149,7 @@ async function cargarPanel() {
     estadoPanel.textContent = "No hay citas próximas";
     tablaCitas.innerHTML = "";
     tablaCitas.hidden = false;
-    return;
+    return true;
   }
 
   const vistas = obtenerCitasVistas(data);
@@ -171,12 +178,27 @@ async function cargarPanel() {
     )
     .join("");
   tablaCitas.hidden = false;
+  return true;
+  } finally {
+    cargaEnCurso = false;
+  }
 }
+
+function iniciarActualizacionAutomatica() {
+  if (actualizacionAutomatica) return;
+  actualizacionAutomatica = setInterval(() => {
+    if (!document.hidden) cargarPanel({ silencioso: true });
+  }, 30000);
+}
+
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden && actualizacionAutomatica) cargarPanel({ silencioso: true });
+});
 
 formulario.addEventListener("submit", async (event) => {
   event.preventDefault();
   contraseñaActual = clave.value;
-  await cargarPanel();
+  if (await cargarPanel()) iniciarActualizacionAutomatica();
 });
 
 cerrarSesion.addEventListener("click", () => location.reload());
