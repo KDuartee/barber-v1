@@ -18,8 +18,32 @@ const formularioBloqueo = document.querySelector("#formulario-bloqueo");
 const fechaBloqueo = document.querySelector("#fecha-bloqueo");
 const motivoBloqueo = document.querySelector("#motivo-bloqueo");
 const listaBloqueados = document.querySelector("#lista-bloqueados");
+const avisoNuevas = document.querySelector("#aviso-nuevas");
+const claveVistas = "collins-citas-vistas-v1";
 
 let contraseñaActual = "";
+
+function escaparHtml(valor) {
+  return String(valor ?? "").replace(/[&<>"']/g, (caracter) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+  })[caracter]);
+}
+
+function obtenerCitasVistas(citas) {
+  try {
+    const guardadas = localStorage.getItem(claveVistas);
+    if (guardadas) return new Set(JSON.parse(guardadas));
+    const iniciales = citas.map((cita) => String(cita.id));
+    localStorage.setItem(claveVistas, JSON.stringify(iniciales));
+    return new Set(iniciales);
+  } catch {
+    return new Set(citas.map((cita) => String(cita.id)));
+  }
+}
 
 function formatoMoneda(numero) {
   return new Intl.NumberFormat("es-MX", {
@@ -74,6 +98,7 @@ function renderDiasBloqueados(dias) {
 
 async function cargarPanel() {
   estadoPanel.textContent = "Buscando citas...";
+  avisoNuevas.hidden = true;
   tablaCitas.hidden = true;
   estadisticas.hidden = true;
   diasBloqueadosSection.hidden = true;
@@ -120,17 +145,29 @@ async function cargarPanel() {
     return;
   }
 
+  const vistas = obtenerCitasVistas(data);
+  const nuevas = data.filter((cita) => !vistas.has(String(cita.id))).length;
+  avisoNuevas.textContent = nuevas
+    ? `${nuevas} cita${nuevas === 1 ? " nueva" : "s nuevas"} en este navegador. Revísalas en la lista.`
+    : "";
+  avisoNuevas.hidden = nuevas === 0;
   estadoPanel.textContent = "";
   tablaCitas.innerHTML = data
     .map(
-      (cita) => `
-    <div class="fila-cita">
-      <strong>${cita.appointment_date} · ${formatoHora12(cita.start_time)}</strong>
-      <p>${cita.service_name}</p>
-      <p>${cita.client_name} — ${cita.client_phone}</p>
-      <button type="button" class="cancelar-cita" data-id="${cita.id}">Cancelar</button>
+      (cita) => {
+        const id = String(cita.id);
+        const esNueva = !vistas.has(id);
+        return `
+    <div class="fila-cita${esNueva ? " fila-cita-nueva" : ""}">
+      <strong>${escaparHtml(cita.appointment_date)} · ${escaparHtml(formatoHora12(cita.start_time))}</strong>
+      ${esNueva ? '<span class="etiqueta-nueva">Nueva en este navegador</span>' : ""}
+      <p>${escaparHtml(cita.service_name)}</p>
+      <p>${escaparHtml(cita.client_name)} — ${escaparHtml(cita.client_phone)}</p>
+      ${esNueva ? `<button type="button" class="marcar-vista" data-id="${escaparHtml(id)}">Marcar vista</button>` : ""}
+      <button type="button" class="cancelar-cita" data-id="${escaparHtml(id)}">Cancelar</button>
     </div>
-  `,
+  `;
+      },
     )
     .join("");
   tablaCitas.hidden = false;
@@ -147,6 +184,26 @@ cerrarSesion.addEventListener("click", () => location.reload());
 refrescar.addEventListener("click", () => cargarPanel());
 
 tablaCitas.addEventListener("click", async (event) => {
+  const marcarVista = event.target.closest(".marcar-vista");
+  if (marcarVista) {
+    try {
+      const vistas = new Set(JSON.parse(localStorage.getItem(claveVistas) || "[]"));
+      vistas.add(marcarVista.dataset.id);
+      localStorage.setItem(claveVistas, JSON.stringify([...vistas]));
+      marcarVista.closest(".fila-cita").classList.remove("fila-cita-nueva");
+      marcarVista.closest(".fila-cita").querySelector(".etiqueta-nueva").remove();
+      marcarVista.remove();
+      const restantes = tablaCitas.querySelectorAll(".marcar-vista").length;
+      avisoNuevas.hidden = restantes === 0;
+      avisoNuevas.textContent = restantes
+        ? `${restantes} cita${restantes === 1 ? " nueva" : "s nuevas"} en este navegador. Revísalas en la lista.`
+        : "";
+    } catch {
+      estadoPanel.textContent = "No se pudo guardar el estado de vista en este navegador.";
+    }
+    return;
+  }
+
   const boton = event.target.closest(".cancelar-cita");
   if (!boton) return;
 

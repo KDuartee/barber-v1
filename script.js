@@ -4,12 +4,12 @@ import { supabasePublishableKey, supabaseUrl } from "./supabase-config.js";
 const supabase = createClient(supabaseUrl, supabasePublishableKey);
 const whatsapp = "526622978045";
 const servicios = {
-  "corte-hombre": { nombre: "Corte hombre", duracion: 30 },
-  "corte-nino": { nombre: "Corte niño", duracion: 30 },
-  "corte-barba": { nombre: "Corte con barba", duracion: 60 },
-  barba: { nombre: "Barba", duracion: 30 },
-  cejas: { nombre: "Cejas", duracion: 30 },
-  "diseno-cejas": { nombre: "Diseño de cejas", duracion: 30 },
+  "corte-hombre": { nombre: "Corte hombre", duracion: 30, precio: 200 },
+  "corte-nino": { nombre: "Corte niño", duracion: 30, precio: 170 },
+  "corte-barba": { nombre: "Corte con barba", duracion: 60, precio: 300 },
+  barba: { nombre: "Barba", duracion: 30, precio: 150 },
+  cejas: { nombre: "Cejas", duracion: 30, precio: 50 },
+  "diseno-cejas": { nombre: "Diseño de cejas", duracion: 30, precio: 50 },
 };
 
 const dias = document.querySelector("#dias");
@@ -21,6 +21,16 @@ const selectorHorarios = document.querySelector("#selector-horarios");
 const estadoReserva = document.querySelector("#estado-reserva");
 const enlaceWhatsapp = document.querySelector("#enlace-whatsapp");
 const seccionReserva = document.querySelector("#reservar");
+const resumenReserva = document.querySelector("#resumen-reserva");
+const resumenServicio = document.querySelector("#resumen-servicio");
+const resumenFecha = document.querySelector("#resumen-fecha");
+const resumenHora = document.querySelector("#resumen-hora");
+const botonReservar = document.querySelector("#boton-reservar");
+const comprobante = document.querySelector("#comprobante-reserva");
+const comprobanteServicio = document.querySelector("#comprobante-servicio");
+const comprobanteFecha = document.querySelector("#comprobante-fecha");
+const comprobanteHora = document.querySelector("#comprobante-hora");
+const comprobanteWhatsapp = document.querySelector("#comprobante-whatsapp");
 let horarioSeleccionado = "";
 let versionHorarios = 0;
 
@@ -42,6 +52,25 @@ function formatoHora12(horaTexto) {
   });
 }
 
+function actualizarResumen() {
+  const servicioElegido = servicios[servicio.value];
+  resumenReserva.hidden = !servicioElegido;
+
+  if (!servicioElegido) return;
+
+  resumenServicio.textContent = `${servicioElegido.nombre} · $${servicioElegido.precio} MXN`;
+  resumenFecha.textContent = fechaSeleccionada
+    ? fechaSeleccionada.toLocaleDateString("es-MX", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+      })
+    : "Pendiente";
+  resumenHora.textContent = horarioSeleccionado
+    ? formatoHora12(horarioSeleccionado)
+    : "Pendiente";
+}
+
 async function crearHorarios() {
   const servicioElegido = servicios[servicio.value];
 
@@ -53,6 +82,7 @@ async function crearHorarios() {
   estadoReserva.textContent = "";
   horarios.innerHTML = "";
   horarioSeleccionado = "";
+  actualizarResumen();
   selectorHorarios.hidden = false;
 
   const solicitudActual = ++versionHorarios;
@@ -101,6 +131,7 @@ function seleccionarHorario(boton, textoHorario) {
   boton.classList.add("seleccionado");
   boton.setAttribute("aria-pressed", "true");
   horarioSeleccionado = textoHorario;
+  actualizarResumen();
 }
 
 function generarDias() {
@@ -152,21 +183,29 @@ function seleccionarDia(boton, fechaDelBoton) {
   boton.classList.add("seleccionado");
   boton.setAttribute("aria-pressed", "true");
   fechaSeleccionada = fechaDelBoton;
+  horarioSeleccionado = "";
+  actualizarResumen();
   crearHorarios();
 }
 
-servicio.addEventListener("change", crearHorarios);
+servicio.addEventListener("change", () => {
+  crearHorarios();
+  actualizarResumen();
+});
 generarDias();
 document.querySelectorAll("[data-servicio]").forEach((boton) => {
   boton.addEventListener("click", () => {
     servicio.value = boton.dataset.servicio;
     crearHorarios();
+    actualizarResumen();
     seccionReserva.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 });
 
 formulario.addEventListener("submit", async (evento) => {
   evento.preventDefault();
+
+  if (botonReservar.disabled) return;
 
   if (!horarioSeleccionado) {
     estadoReserva.textContent = "Elige un horario antes de continuar.";
@@ -179,42 +218,64 @@ formulario.addEventListener("submit", async (evento) => {
 
   const datos = new FormData(formulario);
   const servicioElegido = servicios[datos.get("servicio")];
+  botonReservar.disabled = true;
+  botonReservar.textContent = "Guardando cita...";
   estadoReserva.textContent = "Guardando tu cita...";
-  const { error } = await supabase.rpc("create_appointment", {
-    p_service_id: datos.get("servicio"),
-    p_client_name: datos.get("nombre"),
-    p_client_phone: datos.get("telefono"),
-    p_appointment_date: convertirFechaAISO(fechaSeleccionada),
-    p_start_time: horarioSeleccionado,
-  });
 
-  if (error) {
-    estadoReserva.textContent = error.message.includes("Ese horario")
-      ? "Ese horario acaba de ser reservado. Elige otro."
-      : "No pudimos guardar la cita. Intenta de nuevo.";
-    crearHorarios();
-    return;
+  try {
+    const { error } = await supabase.rpc("create_appointment", {
+      p_service_id: datos.get("servicio"),
+      p_client_name: datos.get("nombre"),
+      p_client_phone: datos.get("telefono"),
+      p_appointment_date: convertirFechaAISO(fechaSeleccionada),
+      p_start_time: horarioSeleccionado,
+    });
+
+    if (error) {
+      estadoReserva.textContent = error.message.includes("Ese horario")
+        ? "Ese horario acaba de ser reservado. Elige otro."
+        : "No pudimos guardar la cita. Intenta de nuevo.";
+      await crearHorarios();
+      return;
+    }
+
+    const mensaje = [
+      "Hola, acabo de solicitar una cita en Collins Barber Shop.",
+      `Servicio: ${servicioElegido.nombre}`,
+      `Fecha: ${fechaSeleccionada.toLocaleDateString("es-MX", { day: "2-digit", month: "2-digit", year: "numeric" })}`,
+      `Hora solicitada: ${formatoHora12(horarioSeleccionado)}`,
+      `Nombre: ${datos.get("nombre")}`,
+      `Mi WhatsApp: ${datos.get("telefono")}`,
+    ].join("\n");
+
+    comprobanteServicio.textContent = `${servicioElegido.nombre} · $${servicioElegido.precio} MXN`;
+    comprobanteFecha.textContent = fechaSeleccionada.toLocaleDateString("es-MX", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+    comprobanteHora.textContent = formatoHora12(horarioSeleccionado);
+    comprobanteWhatsapp.href = `https://wa.me/${whatsapp}?text=${encodeURIComponent(mensaje)}`;
+    comprobante.hidden = false;
+    formulario.reset();
+    document.querySelectorAll(".dia").forEach((dia) => {
+      dia.classList.remove("seleccionado");
+      dia.setAttribute("aria-pressed", "false");
+    });
+    fechaSeleccionada = null;
+    horarioSeleccionado = "";
+    selectorHorarios.hidden = true;
+    actualizarResumen();
+    estadoReserva.textContent = "Tu cita se registró correctamente.";
+    comprobante.focus();
+  } catch {
+    estadoReserva.textContent =
+      "No pudimos conectar con el sistema de citas. Intenta de nuevo.";
+  } finally {
+    botonReservar.disabled = false;
+    botonReservar.textContent = "Solicitar cita";
   }
-
-  const mensaje = [
-    "Hola, acabo de solicitar una cita en Collins Barber Shop.",
-    `Servicio: ${servicioElegido.nombre}`,
-    `Fecha: ${fechaSeleccionada.toLocaleDateString("es-MX", { day: "2-digit", month: "2-digit", year: "numeric" })}`,
-    `Hora solicitada: ${formatoHora12(horarioSeleccionado)}`,
-    `Nombre: ${datos.get("nombre")}`,
-    `Mi WhatsApp: ${datos.get("telefono")}`,
-  ].join("\n");
-
-  window.open(
-    `https://wa.me/${whatsapp}?text=${encodeURIComponent(mensaje)}`,
-    "_blank",
-    "noopener",
-  );
-  formulario.reset();
-  horarioSeleccionado = "";
-  selectorHorarios.hidden = true;
-  estadoReserva.textContent =
-    "¡Tu cita quedó confirmada! Abrimos WhatsApp para avisarle a Collins.";
 });
 
 const mensajeDomicilio =

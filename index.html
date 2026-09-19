@@ -118,10 +118,11 @@
     </header>
     <main>
       <section id="inicio">
-        <h1>Bienvenido a Collins Barber Shop</h1>
+        <p class="etiqueta-hero">Barbería en Guaymas</p>
+        <h1>Collins Barber Shop</h1>
         <p>
-          La excelencia en barbería con nuestros servicios de corte de cabello,
-          afeitado y cuidado personal para hombres.
+          Cortes de cabello, barba y cuidado personal en Guaymas. Elige tu
+          servicio y reserva tu horario en línea.
         </p>
         <a class="boton-principal" href="#reservar">Reserva tu cita</a>
       </section>
@@ -181,9 +182,40 @@
             required
           />
 
-          <button class="boton-principal" type="submit">Solicitar cita</button>
+          <aside id="resumen-reserva" class="resumen-reserva" hidden>
+            <h3>Resumen de tu cita</h3>
+            <dl>
+              <div>
+                <dt>Servicio</dt>
+                <dd id="resumen-servicio">—</dd>
+              </div>
+              <div>
+                <dt>Fecha</dt>
+                <dd id="resumen-fecha">—</dd>
+              </div>
+              <div>
+                <dt>Hora</dt>
+                <dd id="resumen-hora">—</dd>
+              </div>
+            </dl>
+          </aside>
+
+          <button id="boton-reservar" class="boton-principal" type="submit">
+            Solicitar cita
+          </button>
           <p id="estado-reserva" class="estado-reserva" aria-live="polite"></p>
         </form>
+        <section id="comprobante-reserva" class="comprobante-reserva" hidden aria-labelledby="titulo-comprobante" tabindex="-1">
+          <h3 id="titulo-comprobante">Tu cita está registrada</h3>
+          <p>Guarda estos datos. Collins puede consultar tu cita en su panel.</p>
+          <dl>
+            <div><dt>Servicio</dt><dd id="comprobante-servicio"></dd></div>
+            <div><dt>Fecha</dt><dd id="comprobante-fecha"></dd></div>
+            <div><dt>Hora</dt><dd id="comprobante-hora"></dd></div>
+          </dl>
+          <p>WhatsApp es opcional; tu cita ya quedó registrada.</p>
+          <a id="comprobante-whatsapp" class="boton-servicio" href="#" target="_blank" rel="noopener noreferrer">Compartir por WhatsApp</a>
+        </section>
         <p class="nota-reserva">
           Los servicios a domicilio se confirman directamente por WhatsApp.
         </p>
@@ -278,9 +310,9 @@
       </section>
 
       <section id="testimonios">
-        <h2>Lo que dicen nuestros clientes</h2>
+        <h2>Reseñas de clientes</h2>
         <p class="intro-seccion">
-          Testimonios de ejemplo — reemplázalos con reseñas reales.
+          Vista previa del espacio para reseñas reales de Collins.
         </p>
         <div class="lista-testimonios">
           <article class="tarjeta-testimonio">
@@ -312,12 +344,16 @@
 
       <section id="galeria">
         <h2>Galería</h2>
+        <p class="aviso-demo">
+          Imágenes ilustrativas para esta demostración. Se reemplazarán por
+          trabajos reales de Collins antes de publicar.
+        </p>
         <figure>
           <img
-            src="https://placehold.co/400x400"
-            alt="Ejemplo de corte personalizado de Collins Barber Shop"
-            width="400"
-            height="400"
+            src="./images/demo-fade.jpg"
+            alt="Imagen ilustrativa de un corte fade en proceso"
+            width="800"
+            height="800"
             loading="lazy"
             decoding="async"
           />
@@ -325,36 +361,36 @@
         </figure>
         <figure>
           <img
-            src="https://placehold.co/400x400"
-            alt="Ejemplo de corte de cabello estilo fade"
-            width="400"
-            height="400"
+            src="./images/demo-barba.jpg"
+            alt="Imagen ilustrativa de un perfilado de barba"
+            width="800"
+            height="800"
             loading="lazy"
             decoding="async"
           />
-          <figcaption>Corte de cabello fade</figcaption>
+          <figcaption>Perfilado de barba</figcaption>
         </figure>
         <figure>
           <img
-            src="https://placehold.co/400x400"
-            alt="Ejemplo de afeitado profesional en barbería"
-            width="400"
-            height="400"
+            src="./images/demo-herramientas.jpg"
+            alt="Imagen ilustrativa de herramientas profesionales de barbería"
+            width="800"
+            height="800"
             loading="lazy"
             decoding="async"
           />
-          <figcaption>Afeitado profesional</figcaption>
+          <figcaption>Herramientas profesionales</figcaption>
         </figure>
         <figure>
           <img
-            src="https://placehold.co/400x400"
-            alt="Ejemplo de corte de cabello terminado"
-            width="400"
-            height="400"
+            src="./images/demo-sillon.jpg"
+            alt="Imagen ilustrativa de un espacio de barbería preparado"
+            width="800"
+            height="800"
             loading="lazy"
             decoding="async"
           />
-          <figcaption>Corte de cabello</figcaption>
+          <figcaption>Tu espacio para renovarte</figcaption>
         </figure>
       </section>
 
@@ -432,6 +468,16 @@
         </a>
       </section>
     </main>
+    <nav class="barra-movil" aria-label="Acciones rápidas">
+      <a href="tel:+5216622978045">Llamar</a>
+      <a
+        href="https://wa.me/526622978045"
+        target="_blank"
+        rel="noopener noreferrer"
+        >WhatsApp</a
+      >
+      <a class="barra-movil-reservar" href="#reservar">Agendar</a>
+    </nav>
     <footer>
       <p>&copy; 2026 Collins Barber Shop. Todos los derechos reservados.</p>
     </footer>

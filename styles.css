@@ -125,6 +125,27 @@ h2::after {
   z-index: 1;
 }
 
+#inicio h1 {
+  max-width: 760px;
+  font-size: clamp(2.5rem, 7vw, 5rem);
+  line-height: 1;
+}
+
+#inicio > p:not(.etiqueta-hero) {
+  max-width: 640px;
+  padding: 0 1.25rem;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.etiqueta-hero {
+  color: var(--color-gold-light);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.22rem;
+  text-transform: uppercase;
+}
+
 .boton-principal {
   display: inline-block;
   border: none;
@@ -275,6 +296,82 @@ h2::after {
   color: var(--color-gold-light);
 }
 
+.resumen-reserva {
+  margin: 0.75rem 0 1rem;
+  border: 1px solid rgba(201, 163, 78, 0.5);
+  border-radius: 8px;
+  padding: 1.25rem;
+  background-color: rgba(201, 163, 78, 0.08);
+}
+
+.resumen-reserva h3 {
+  margin-bottom: 1rem;
+  color: var(--color-gold-light);
+}
+
+.resumen-reserva dl {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.resumen-reserva dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid #3b3b3b;
+  padding-bottom: 0.5rem;
+}
+
+.resumen-reserva dl div:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.resumen-reserva dt {
+  color: #c9c6bd;
+}
+
+.resumen-reserva dd {
+  text-align: right;
+  font-weight: 600;
+}
+
+.comprobante-reserva {
+  max-width: 560px;
+  margin: 1.5rem auto;
+  border: 1px solid var(--color-gold);
+  border-radius: 12px;
+  padding: 1.5rem;
+  background: var(--color-bg);
+  text-align: left;
+}
+
+.comprobante-reserva h3 {
+  color: var(--color-gold-light);
+}
+
+.comprobante-reserva dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #3b3b3b;
+}
+
+.comprobante-reserva dt {
+  color: #c9c6bd;
+}
+
+.comprobante-reserva dd {
+  text-align: right;
+  font-weight: 600;
+}
+
+.boton-principal:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
 .nota-reserva {
   margin-bottom: 0.5rem !important;
 }
@@ -388,6 +485,16 @@ h2::after {
   text-align: center;
 }
 
+.aviso-demo {
+  grid-column: 1 / -1;
+  max-width: 680px;
+  margin: -0.75rem auto 0;
+  color: #c9c6bd;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
 #galeria img {
   width: 100%;
   height: 250px;
@@ -459,7 +566,15 @@ figcaption {
   border: 0;
 }
 
+.barra-movil {
+  display: none;
+}
+
 @media (max-width: 700px) {
+  body {
+    padding-bottom: 68px;
+  }
+
   header {
     grid-template-columns: 1fr;
     gap: 1rem;
@@ -485,8 +600,45 @@ figcaption {
     padding: 3rem 1.25rem;
   }
 
-  h1 {
-    font-size: 2rem;
+  #inicio {
+    min-height: calc(100svh - 68px);
+  }
+
+  #inicio h1 {
+    font-size: clamp(2.5rem, 13vw, 3.7rem);
+  }
+
+  .barra-movil {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 20;
+    display: grid;
+    grid-template-columns: 0.8fr 1fr 1.2fr;
+    padding: 0.55rem max(0.75rem, env(safe-area-inset-right))
+      calc(0.55rem + env(safe-area-inset-bottom))
+      max(0.75rem, env(safe-area-inset-left));
+    background-color: rgba(10, 10, 10, 0.96);
+    border-top: 1px solid #3b3b3b;
+    backdrop-filter: blur(10px);
+  }
+
+  .barra-movil a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    color: var(--color-cream);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .barra-movil-reservar {
+    border-radius: 6px;
+    background-color: var(--color-gold);
+    color: var(--color-bg) !important;
   }
 }
 
@@ -603,6 +755,32 @@ figcaption {
   background-color: var(--color-bg-panel);
   border-radius: 8px;
   padding: 1rem;
+}
+
+.aviso-nuevas {
+  margin-top: 1rem;
+  color: var(--color-gold-light);
+  font-size: 0.9rem;
+}
+
+.fila-cita-nueva {
+  border: 1px solid var(--color-gold);
+}
+
+.etiqueta-nueva {
+  color: var(--color-gold-light);
+  font-size: 0.8rem;
+}
+
+.marcar-vista {
+  justify-self: start;
+  min-height: 44px;
+  border: 1px solid var(--color-gold);
+  border-radius: 6px;
+  padding: 0.4rem 0.8rem;
+  background: transparent;
+  color: var(--color-gold-light);
+  cursor: pointer;
 }
 
 .panel {
