@@ -296,6 +296,10 @@ h2::after {
   color: var(--color-gold-light);
 }
 
+#estado-reserva {
+  text-align: center;
+}
+
 .resumen-reserva {
   margin: 0.75rem 0 1rem;
   border: 1px solid rgba(201, 163, 78, 0.5);
@@ -343,6 +347,10 @@ h2::after {
   border-radius: 12px;
   padding: 1.5rem;
   background: var(--color-bg);
+  text-align: center;
+}
+
+.comprobante-reserva dl {
   text-align: left;
 }
 
