@@ -92,8 +92,8 @@ function renderDiasBloqueados(dias) {
     .map(
       (dia) => `
         <div class="fila-bloqueo">
-          <span>${dia.blocked_date}${dia.reason ? " — " + dia.reason : ""}</span>
-          <button type="button" class="desbloquear-dia" data-fecha="${dia.blocked_date}">Desbloquear</button>
+          <span>${escaparHtml(dia.blocked_date)}${dia.reason ? " — " + escaparHtml(dia.reason) : ""}</span>
+          <button type="button" class="desbloquear-dia" data-fecha="${escaparHtml(dia.blocked_date)}">Desbloquear</button>
         </div>`,
     )
     .join("");

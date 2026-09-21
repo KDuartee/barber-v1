@@ -13,7 +13,13 @@ const servicios = {
 };
 
 const dias = document.querySelector("#dias");
+const estadoDias = document.querySelector("#estado-dias");
+const reintentarDias = document.querySelector("#reintentar-dias");
+const avisosBloqueos = document.querySelector("#avisos-bloqueos");
 let fechaSeleccionada = null;
+let fechasBloqueadas = new Map();
+let bloqueosListos = false;
+let versionBloqueos = 0;
 const formulario = document.querySelector("#formulario-reserva");
 const servicio = document.querySelector("#servicio");
 const horarios = document.querySelector("#horarios");
@@ -74,7 +80,12 @@ function actualizarResumen() {
 async function crearHorarios() {
   const servicioElegido = servicios[servicio.value];
 
-  if (!servicioElegido || !fechaSeleccionada) {
+  if (
+    !servicioElegido ||
+    !fechaSeleccionada ||
+    !bloqueosListos ||
+    fechasBloqueadas.has(convertirFechaAISO(fechaSeleccionada))
+  ) {
     selectorHorarios.hidden = true;
     return;
   }
@@ -135,6 +146,8 @@ function seleccionarHorario(boton, textoHorario) {
 }
 
 function generarDias() {
+  dias.replaceChildren();
+  avisosBloqueos.replaceChildren();
   const hoy = new Date();
   hoy.setHours(0, 0, 0, 0);
 
@@ -143,6 +156,8 @@ function generarDias() {
     fechaDelBoton.setDate(hoy.getDate() + i);
 
     const boton = document.createElement("button");
+    const fechaISO = convertirFechaAISO(fechaDelBoton);
+    const bloqueo = fechasBloqueadas.get(fechaISO);
     boton.type = "button";
     boton.className = "dia";
     boton.setAttribute("aria-pressed", "false");
@@ -160,20 +175,45 @@ function generarDias() {
       }),
     );
 
-    if (fechaDelBoton.getDay() === 0) {
+    if (!bloqueosListos) {
+      boton.disabled = true;
+      boton.title = "Consultando disponibilidad";
+    } else if (bloqueo) {
+      boton.disabled = true;
+      boton.classList.add("dia-bloqueado");
+      boton.title = bloqueo.reason || "Día no disponible";
+      boton.setAttribute("aria-label", `${boton.getAttribute("aria-label")}. No disponible${bloqueo.reason ? ": " + bloqueo.reason : ""}`);
+      const etiqueta = document.createElement("span");
+      etiqueta.className = "dia-estado";
+      etiqueta.textContent = "Cerrado";
+      boton.append(etiqueta);
+
+      const aviso = document.createElement("li");
+      const fechaLegible = fechaDelBoton.toLocaleDateString("es-MX", {
+        weekday: "long", day: "numeric", month: "long",
+      });
+      aviso.textContent = `${fechaLegible}: ${bloqueo.reason || "No disponible"}`;
+      avisosBloqueos.append(aviso);
+    } else if (fechaDelBoton.getDay() === 0) {
       boton.disabled = true;
       boton.title = "Cerrado los domingos";
     } else {
       boton.addEventListener("click", () =>
         seleccionarDia(boton, fechaDelBoton),
       );
+      if (fechaSeleccionada && convertirFechaAISO(fechaSeleccionada) === fechaISO) {
+        boton.classList.add("seleccionado");
+        boton.setAttribute("aria-pressed", "true");
+      }
     }
 
     dias.append(boton);
   }
+  avisosBloqueos.hidden = avisosBloqueos.childElementCount === 0;
 }
 
 function seleccionarDia(boton, fechaDelBoton) {
+  if (boton.disabled || fechasBloqueadas.has(convertirFechaAISO(fechaDelBoton))) return;
   document
     .querySelectorAll(".dia")
     .forEach((d) => {
@@ -188,11 +228,47 @@ function seleccionarDia(boton, fechaDelBoton) {
   crearHorarios();
 }
 
+async function cargarDiasBloqueados() {
+  const solicitudActual = ++versionBloqueos;
+  estadoDias.textContent = "Consultando días disponibles...";
+  reintentarDias.hidden = true;
+
+  try {
+    const { data, error } = await supabase.rpc("get_public_blocked_dates");
+    if (solicitudActual !== versionBloqueos) return;
+    if (error) throw error;
+
+    fechasBloqueadas = new Map((data || []).map((dia) => [dia.blocked_date, dia]));
+    bloqueosListos = true;
+    if (fechaSeleccionada && fechasBloqueadas.has(convertirFechaAISO(fechaSeleccionada))) {
+      fechaSeleccionada = null;
+      horarioSeleccionado = "";
+      versionHorarios++;
+      horarios.replaceChildren();
+      selectorHorarios.hidden = true;
+      estadoReserva.textContent = "El día elegido ya no está disponible. Selecciona otro.";
+      actualizarResumen();
+    }
+    generarDias();
+    estadoDias.textContent = "";
+    if (fechaSeleccionada) void crearHorarios();
+  } catch {
+    if (solicitudActual !== versionBloqueos) return;
+    estadoDias.textContent = "No pudimos comprobar los días cerrados. Intenta de nuevo.";
+    reintentarDias.hidden = false;
+  }
+}
+
 servicio.addEventListener("change", () => {
   crearHorarios();
   actualizarResumen();
 });
 generarDias();
+void cargarDiasBloqueados();
+reintentarDias.addEventListener("click", () => void cargarDiasBloqueados());
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) void cargarDiasBloqueados();
+});
 document.querySelectorAll("[data-servicio]").forEach((boton) => {
   boton.addEventListener("click", () => {
     servicio.value = boton.dataset.servicio;
@@ -215,6 +291,10 @@ formulario.addEventListener("submit", async (evento) => {
     estadoReserva.textContent = "Elige un día antes de continuar.";
     return;
   }
+  if (!bloqueosListos || fechasBloqueadas.has(convertirFechaAISO(fechaSeleccionada))) {
+    estadoReserva.textContent = "Ese día no está disponible. Elige otro.";
+    return;
+  }
 
   const datos = new FormData(formulario);
   const servicioElegido = servicios[datos.get("servicio")];
@@ -232,6 +312,17 @@ formulario.addEventListener("submit", async (evento) => {
     });
 
     if (error) {
+      if (error.message.includes("Día bloqueado")) {
+        fechaSeleccionada = null;
+        horarioSeleccionado = "";
+        versionHorarios++;
+        selectorHorarios.hidden = true;
+        horarios.replaceChildren();
+        actualizarResumen();
+        await cargarDiasBloqueados();
+        estadoReserva.textContent = "Collins acaba de bloquear ese día. Elige otro.";
+        return;
+      }
       estadoReserva.textContent = error.message.includes("Ese horario")
         ? "Ese horario acaba de ser reservado. Elige otro."
         : "No pudimos guardar la cita. Intenta de nuevo.";

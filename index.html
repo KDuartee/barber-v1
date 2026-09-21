@@ -150,6 +150,9 @@
             aria-labelledby="etiqueta-dias"
             aria-live="polite"
           ></div>
+          <p id="estado-dias" class="estado-dias" role="status">Consultando días disponibles...</p>
+          <button id="reintentar-dias" class="reintentar-dias" type="button" hidden>Reintentar consulta</button>
+          <ul id="avisos-bloqueos" class="avisos-bloqueos" aria-label="Días no disponibles" hidden></ul>
 
           <div id="selector-horarios" class="selector-horarios" hidden>
             <p id="etiqueta-horarios">3. Elige un horario</p>
@@ -472,6 +475,6 @@
     <footer>
       <p>&copy; 2026 Collins Barber Shop. Todos los derechos reservados.</p>
     </footer>
-    <script type="module" src="script.js?v=20260919"></script>
+    <script type="module" src="script.js?v=20260921"></script>
   </body>
 </html>

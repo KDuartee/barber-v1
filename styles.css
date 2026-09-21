@@ -261,6 +261,48 @@ h2::after {
   cursor: not-allowed;
 }
 
+.dia.dia-bloqueado {
+  border-style: dashed;
+  opacity: 0.7;
+}
+
+.dia .dia-estado {
+  font-size: 0.65rem;
+  line-height: 1;
+}
+
+.dia:disabled:hover {
+  background: transparent;
+  color: var(--color-cream);
+}
+
+.dia:disabled:hover span {
+  color: #c9c6bd;
+}
+
+.estado-dias,
+.avisos-bloqueos {
+  margin: -0.75rem 0 1rem;
+  color: #c9c6bd;
+  font-size: 0.9rem;
+}
+
+.avisos-bloqueos {
+  padding-left: 1.25rem;
+  list-style: disc;
+}
+
+.reintentar-dias {
+  margin: 0 0 1rem;
+  border: 1px solid var(--color-gold);
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  background: transparent;
+  color: var(--color-cream);
+  font: inherit;
+  cursor: pointer;
+}
+
 .horarios {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(88px, 1fr));
