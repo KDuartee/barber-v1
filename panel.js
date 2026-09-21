@@ -23,6 +23,8 @@ const claveVistas = "collins-citas-vistas-v1";
 
 let contraseñaActual = "";
 let cargaEnCurso = false;
+let estadisticasEnCurso = false;
+let bloqueosEnCurso = false;
 let actualizacionAutomatica = null;
 
 function escaparHtml(valor) {
@@ -98,6 +100,37 @@ function renderDiasBloqueados(dias) {
   diasBloqueadosSection.hidden = false;
 }
 
+async function actualizarEstadisticas() {
+  if (estadisticasEnCurso) return;
+  estadisticasEnCurso = true;
+  try {
+    const { data, error } = await supabase.rpc("get_monthly_stats", { p_password: contraseñaActual });
+    if (!error) mostrarEstadisticas(data);
+  } catch {
+    // Una falla en estadísticas no debe detener la lista de citas.
+  } finally {
+    estadisticasEnCurso = false;
+  }
+}
+
+async function actualizarBloqueos() {
+  if (bloqueosEnCurso) return;
+  bloqueosEnCurso = true;
+  try {
+    const { data, error } = await supabase.rpc("get_blocked_dates", { p_password: contraseñaActual });
+    if (!error) renderDiasBloqueados(data);
+  } catch {
+    // Una falla en días bloqueados no debe detener la lista de citas.
+  } finally {
+    bloqueosEnCurso = false;
+  }
+}
+
+function actualizarDatosComplementarios() {
+  void actualizarEstadisticas();
+  void actualizarBloqueos();
+}
+
 async function cargarPanel({ silencioso = false } = {}) {
   if (cargaEnCurso) return false;
   cargaEnCurso = true;
@@ -123,32 +156,11 @@ async function cargarPanel({ silencioso = false } = {}) {
   cerrarSesion.hidden = false;
   refrescar.hidden = false;
 
-  const { data: stats, error: statsError } = await supabase.rpc(
-    "get_monthly_stats",
-    {
-      p_password: contraseñaActual,
-    },
-  );
-
-  if (!statsError) {
-    mostrarEstadisticas(stats);
-  }
-
-  const { data: bloqueados, error: bloqueadosError } = await supabase.rpc(
-    "get_blocked_dates",
-    {
-      p_password: contraseñaActual,
-    },
-  );
-
-  if (!bloqueadosError) {
-    renderDiasBloqueados(bloqueados);
-  }
-
   if (data.length === 0) {
     estadoPanel.textContent = "No hay citas próximas";
     tablaCitas.innerHTML = "";
     tablaCitas.hidden = false;
+    void actualizarDatosComplementarios();
     return true;
   }
 
@@ -178,6 +190,7 @@ async function cargarPanel({ silencioso = false } = {}) {
     )
     .join("");
   tablaCitas.hidden = false;
+  void actualizarDatosComplementarios();
   return true;
   } finally {
     cargaEnCurso = false;
