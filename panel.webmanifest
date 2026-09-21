@@ -1,0 +1,24 @@
+{
+  "id": "./panel.html",
+  "name": "Collins · Panel",
+  "short_name": "Collins Panel",
+  "description": "Panel de citas de Collins Barber Shop",
+  "lang": "es-MX",
+  "start_url": "./panel.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+  "icons": [
+    {
+      "src": "./images/panel-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./images/panel-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
